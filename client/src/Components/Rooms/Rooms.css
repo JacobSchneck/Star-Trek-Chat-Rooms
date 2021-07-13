@@ -1,0 +1,26 @@
+.link-container {
+	display: grid;
+	grid-template-columns: repeat(3, 180px [col-start]); 
+	grid-template-rows: repeat(2, 80px [col-start]);	
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	justify-content: center;
+}
+
+.link {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+.button {
+	width: 120px;
+	height: 60px;
+}
