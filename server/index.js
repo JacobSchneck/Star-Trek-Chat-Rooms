@@ -1,6 +1,7 @@
 // Jacob Schneck
 // Server Thing for Star Trek Chat rooms
 
+//--------------------- SERVER SETUP -------------------
 const express = require('express');
 const app = express();
 
@@ -21,6 +22,8 @@ const io = socketio(server, corsOption);
 
 const PORT = process.env.PORT || 5000;
 
+//---------------------  SHOW SERVER RUNNING -----------
+
 // Check to see if server is up on Localhost:PORT
 const router = express.Router();
 router.get('/', (req, res) => {
@@ -28,17 +31,39 @@ router.get('/', (req, res) => {
 });
 app.use(router);
 
+//--------------------- USER UTILS -------------------- 
+
+let users = [];
+const addUser = ( {name, room, id } ) => {
+	users.push({name, room, id});
+}
+
+const removeUser = (id) => {
+	users = users.filter( user => user.id !== id);
+	const index = users.findIndex( user => user === id);
+	if ( index !== -1 ) {
+		return users.splice(index, 1);
+	}
+}
+
+//---------------------  SOCKETS -----------------------
 io.on('connection', (socket) => {
-	// console.log(`New connection: ${socket.id}`)
-	console.log("hi");
+	console.log("New user connected")
+	
 
-	socket.on('join', ({ userName, roomName }, callback) => {
-		console.log(`${userName} joined`);
-	})
+	socket.on('join', ({ name, room }, callback) => {
+		console.log(`${name} joined ${room}`);
+		addUser({ name, room, id: socket.id });
+		console.log(users);
+	});
 
-	socket.on('disconnet', () => {
-		console.log("goodbye");
-	})
+
+	socket.on('leave', ({ name, room }) => {
+		console.log(`${name} left ${room}\n`);
+		console.log(users.length);
+		removeUser(socket.id);
+		console.log(users.length);
+	});
 });
 
 server.listen(PORT, () => {
